@@ -99,14 +99,16 @@ QueryData genLaunchd(QueryContext& context) {
 
   std::vector<std::string> launchers;
   for (const auto& search_path : kLaunchdSearchPaths) {
-    osquery::listFilesInDirectory(search_path, launchers);
+    // osquery::listFilesInDirectory(search_path, launchers);
+    osquery::listHiddenFilesInDirectory(search_path, launchers);
   }
 
   // List all users on the system, and walk common search paths with homes.
   auto homes = osquery::getHomeDirectories();
   for (const auto& home : homes) {
     for (const auto& path : kUserLaunchdSearchPaths) {
-      osquery::listFilesInDirectory(home / path, launchers);
+      //osquery::listFilesInDirectory(home / path, launchers);
+      osquery::listHiddenFilesInDirectory(home / path, launchers);
     }
   }
 

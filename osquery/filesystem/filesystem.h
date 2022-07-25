@@ -155,6 +155,9 @@ Status pathExists(const boost::filesystem::path& path);
 Status listFilesInDirectory(const boost::filesystem::path& path,
                             std::vector<std::string>& results,
                             bool recursive = false);
+Status listHiddenFilesInDirectory(const boost::filesystem::path& path,
+                            std::vector<std::string>& results,
+                            bool recursive = false);
 
 /**
  * @brief List all of the directories in a specific directory, non-recursively.

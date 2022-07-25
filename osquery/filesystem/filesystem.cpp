@@ -330,6 +330,7 @@ static bool checkForLoops(std::set<int>& dsym_inos, std::string path) {
 static void genGlobs(std::string path,
                      std::vector<std::string>& results,
                      GlobLimits limits) {
+
   // Use our helped escape/replace for wildcards.
   replaceGlobWildcards(path, limits);
   // inodes of directory symlinks for loop detection
@@ -385,9 +386,16 @@ Status resolveFilePattern(const fs::path& fs_path,
 
 inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
   // Replace SQL-wildcard '%' with globbing wildcard '*'.
+  bool hidden_files = false;
+
   if (pattern.find('%') != std::string::npos) {
     boost::replace_all(pattern, "%", "*");
   }
+
+  if (pattern.find('.*') != std::string::npos) {
+    hidden_files = true;
+  }
+
 
   // Relative paths are a bad idea, but we try to accommodate.
   if ((pattern.size() == 0 || ((pattern[0] != '/' && pattern[0] != '\\') &&
@@ -419,9 +427,16 @@ inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
         canonicalized += '/';
       }
       // We are unable to canonicalize the meaning of post-wildcard limiters.
+      if (hidden_files == true) {
+        pattern = fs::path(canonicalized + "." + pattern.substr(base.size()))
+                    .make_preferred()
+                    .string();
+      } else {
+
       pattern = fs::path(canonicalized + pattern.substr(base.size()))
                     .make_preferred()
                     .string();
+      }
     }
   }
 }
@@ -446,6 +461,14 @@ Status listFilesInDirectory(const fs::path& path,
                             bool recursive) {
   return listInAbsoluteDirectory(
       (path / ((recursive) ? "**" : "*")), results, GLOB_FILES);
+}
+
+Status listHiddenFilesInDirectory(const fs::path& path,
+                            std::vector<std::string>& results,
+                            bool recursive) {
+  fs::path hiddenPath = path.string() + ((recursive) ? "/.**" : "/.*");
+  return listInAbsoluteDirectory(
+      hiddenPath, results, GLOB_FILES);
 }
 
 Status listDirectoriesInDirectory(const fs::path& path,
