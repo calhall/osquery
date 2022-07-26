@@ -330,7 +330,6 @@ static bool checkForLoops(std::set<int>& dsym_inos, std::string path) {
 static void genGlobs(std::string path,
                      std::vector<std::string>& results,
                      GlobLimits limits) {
-
   // Use our helped escape/replace for wildcards.
   replaceGlobWildcards(path, limits);
   // inodes of directory symlinks for loop detection
@@ -386,7 +385,7 @@ Status resolveFilePattern(const fs::path& fs_path,
 
 inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
   // Replace SQL-wildcard '%' with globbing wildcard '*'.
-  
+
   // Track if we are looking for hidden files
   bool hidden_files = false;
 
@@ -394,10 +393,10 @@ inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
     boost::replace_all(pattern, "%", "*");
   }
 
-  if ((pattern.substr(pattern.size() -3) == ".**") || (pattern.substr(pattern.size() -2) == ".*")) {
+  if ((pattern.substr(pattern.size() - 3) == ".**") ||
+      (pattern.substr(pattern.size() - 2) == ".*")) {
     hidden_files = true;
   }
-
 
   // Relative paths are a bad idea, but we try to accommodate.
   if ((pattern.size() == 0 || ((pattern[0] != '/' && pattern[0] != '\\') &&
@@ -432,14 +431,12 @@ inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
       // Ensure any hidden file wildcards are appended to the returned path
       if (hidden_files == true) {
         pattern = fs::path(canonicalized + "." + pattern.substr(base.size()))
-                    .make_preferred()
-                    .string();
-      } 
-      else 
-      {
-      pattern = fs::path(canonicalized + pattern.substr(base.size()))
-                    .make_preferred()
-                    .string();
+                      .make_preferred()
+                      .string();
+      } else {
+        pattern = fs::path(canonicalized + pattern.substr(base.size()))
+                      .make_preferred()
+                      .string();
       }
     }
   }
@@ -468,8 +465,8 @@ Status listFilesInDirectory(const fs::path& path,
 }
 
 Status listHiddenFilesInDirectory(const fs::path& path,
-                            std::vector<std::string>& results,
-                            bool recursive) {
+                                  std::vector<std::string>& results,
+                                  bool recursive) {
   return listInAbsoluteDirectory(
       (path / ((recursive) ? ".**" : ".*")), results, GLOB_FILES);
 }

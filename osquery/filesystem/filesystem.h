@@ -156,8 +156,8 @@ Status listFilesInDirectory(const boost::filesystem::path& path,
                             std::vector<std::string>& results,
                             bool recursive = false);
 Status listHiddenFilesInDirectory(const boost::filesystem::path& path,
-                            std::vector<std::string>& results,
-                            bool recursive = false);
+                                  std::vector<std::string>& results,
+                                  bool recursive = false);
 
 /**
  * @brief List all of the directories in a specific directory, non-recursively.
@@ -379,7 +379,8 @@ Status readRawMem(size_t base, size_t length, void** buffer);
  * Given a set of paths we bundle these into a tar archive.
  */
 Status archive(const std::set<boost::filesystem::path>& path,
-               const boost::filesystem::path& out, std::size_t block_size = 8192);
+               const boost::filesystem::path& out,
+               std::size_t block_size = 8192);
 
 /*
  * @brief Given a path, compress it with zstd and save to out.

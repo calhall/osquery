@@ -175,5 +175,5 @@ QueryData genLaunchdOverrides(QueryContext& context) {
 
   return results;
 }
-}
-}
+} // namespace tables
+} // namespace osquery
