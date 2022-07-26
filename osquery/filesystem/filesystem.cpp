@@ -386,6 +386,8 @@ Status resolveFilePattern(const fs::path& fs_path,
 
 inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
   // Replace SQL-wildcard '%' with globbing wildcard '*'.
+  
+  // Track if we are looking for hidden files
   bool hidden_files = false;
 
   if (pattern.find('%') != std::string::npos) {
@@ -427,6 +429,7 @@ inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
         canonicalized += '/';
       }
       // We are unable to canonicalize the meaning of post-wildcard limiters.
+      // Ensure any hidden file wildcards are appended to the returned path
       if (hidden_files == true) {
         pattern = fs::path(canonicalized + "." + pattern.substr(base.size()))
                     .make_preferred()
@@ -467,9 +470,8 @@ Status listFilesInDirectory(const fs::path& path,
 Status listHiddenFilesInDirectory(const fs::path& path,
                             std::vector<std::string>& results,
                             bool recursive) {
-  fs::path hiddenPath = path.string() + ((recursive) ? "/.**" : "/.*");
   return listInAbsoluteDirectory(
-      hiddenPath, results, GLOB_FILES);
+      (path / ((recursive) ? ".**" : ".*")), results, GLOB_FILES);
 }
 
 Status listDirectoriesInDirectory(const fs::path& path,
