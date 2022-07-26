@@ -392,7 +392,7 @@ inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
     boost::replace_all(pattern, "%", "*");
   }
 
-  if (pattern.find('.*') != std::string::npos) {
+  if ((pattern.substr(pattern.size() -3) == ".**") || (pattern.substr(pattern.size() -2) == ".*")) {
     hidden_files = true;
   }
 
@@ -431,8 +431,9 @@ inline void replaceGlobWildcards(std::string& pattern, GlobLimits limits) {
         pattern = fs::path(canonicalized + "." + pattern.substr(base.size()))
                     .make_preferred()
                     .string();
-      } else {
-
+      } 
+      else 
+      {
       pattern = fs::path(canonicalized + pattern.substr(base.size()))
                     .make_preferred()
                     .string();
